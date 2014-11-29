@@ -109,25 +109,25 @@ def initialise():
   '''
   message = bytearray('3a36344a4b44383942535439'.decode('hex'))
   ret = send2(message)
-  # Okay, this is the string we need to use, ie "357d15929887d0"
+  # Okay, this is the string we need to use, ie "35a3680bc56353"
   reply = str(ret).encode('hex')
   # Turn it into an array of bytes
   message = bytearray(reply.decode('hex'))
   lrc = 0
   # foreach byte in ret, add 0x39
   lrc ^= message[0]
-  for i in range(1,5):
+  for i in range(1,6):
     message[i] += 0x39
     lrc ^= message[i]
-  # Update parity
+  # Update parity "35dca144fe63"
   message[6] = lrc
-  # Send back.  This SHOULD work.
+  # Send back "35dca144fe63f2".  This SHOULD work.
   ret = send2(message)
-  # Receive 010405
+  # Receive 010405 IF initialised
   if ret.__str__().encode('hex') == '010405':
     print 'Success, initialised'
   else:
-    print 'Got '+ret.__str__().encode('hex') 
+    print 'Initialisation failed.  Got '+ret.__str__().encode('hex') 
   return ret
 
 def initialise2():
