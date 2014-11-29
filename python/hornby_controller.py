@@ -83,8 +83,13 @@ def wait(secs):
   print "Wait {0:d} seconds".format(secs)
   time.sleep(secs)
 
-''' Open a serial connection with the Hornby Elite DCC controller they would have to download pyserial (before hand)
-   they would have to run the command dmesg
+'''
+  Open a serial connection with the Hornby Elite DCC controller they would have to
+  download pyserial (before hand)
+  To find which device you need to connect to, run the command
+    dmesg | grep tty
+  Yours is the last tty present
+  This code block tries to find the right one.
 '''
 try:
   hornby.connection_open('/dev/ttyACM0',115200) #<<<<<< must be changed to the right device + baud rate changed for the elink
@@ -96,15 +101,19 @@ except RuntimeError as e:
 
 
 # set_debug(True) to show the data transmitted and received from the controller
-hornby.set_debug(True)
+# Try not to worry if it goes wierd
+hornby.set_debug(False)
 
+# Check hardware and perform initialisation 
 hornby.setup()
 
 # create a train object to represent each train to be controlled
 # parameter 1 = DCC addres
+# The somerset Belle (small black 6-wheeler steam train) has an ID of 3
 t1 = hornby.Train(3)
 
-# Are we root?  If we are not root, GPIO won't work.
+# Are we root?  If we are not root, GPIO won't work.  To stop it bombing, I
+# have been using "if isroot" before GPIO calls.
 isroot = (os.geteuid() == 0);
 
 
@@ -126,7 +135,7 @@ def Motion(SP):
     t1.throttle(0,hornby.FORWARD)
     time.sleep(1)
     print "what would you like to do??"
-    option = raw_input("Press a) if you wish to carry on movinf forward\nPress b) if you wish to reverse \n>>")
+    option = raw_input("Press a) if you wish to carry on moving forward\nPress b) if you wish to reverse \n>>")
     repeat = 1
 #    while repeat >= 1:
 ##    while True:
@@ -139,8 +148,8 @@ def Motion(SP):
       
       repeat+= 1
       t1.throttle(80,hornby.REVERSE)
-##      else:
-##        print "invalid option"
+    else:
+      print "invalid option"
         
     
 ##    t1.throttle(30,hornby.REVERSE)
@@ -154,7 +163,7 @@ try:
     \t\t\t********************************
 
 loading sensor....
-press Ctrl + C to exit
+press Ctrl + C ONCE to exit
           '''
     t1.throttle(0,hornby.FORWARD)
     speed = raw_input("\nplease enter the speed you wish the train to travel  ")
@@ -166,10 +175,11 @@ press Ctrl + C to exit
 
     # needed otherwise the signal will still be transmitted and the loco will continue to move
     if isroot:
+      # This calls the function "Motion" when the GPIO pin rises. 
       GPIO.add_event_detect(SP, GPIO.RISING, callback=Motion)
     while 1:
-        time.sleep(4)
-
+      # This causes it to wait for the GPIO pin to trigger
+      time.sleep(2)
 
     # close the connection with a Hornby Elite DCC controller 
     hornby.connection_close()
@@ -195,3 +205,11 @@ except KeyboardInterrupt:
     \t\t\t      *****ENDING*****
     \t\t\t********************************
           '''
+
+# Example function for writing to a file
+def writelog(message):
+   '''
+      To write to a file, call this function
+   '''
+   with open("messagelog.log", "a") as myfile:
+     myfile.write(message)

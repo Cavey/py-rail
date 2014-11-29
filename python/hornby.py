@@ -65,7 +65,7 @@ def setup():
     print 'eLink not yet initialised...'
     initialise()
   else:
-    print 'Elink Initialised '+str(type(status))
+    print 'eLink pre-Initialised'
 
 def get_firmware_version():
   '''
@@ -105,7 +105,7 @@ def get_status():
 
 def initialise():
   '''
-    Final initialistion.... oh egad.
+    Final initialistion.... oh egad. Here be dragons. 
   '''
   message = bytearray('3a36344a4b44383942535439'.decode('hex'))
   ret = send2(message)
@@ -129,25 +129,6 @@ def initialise():
   else:
     print 'Initialisation failed.  Got '+ret.__str__().encode('hex') 
   return ret
-
-def initialise2():
-  '''
-    Final initialistion.... oh egad.
-  '''
-  message = bytearray('3a36344a4b44383942535439'.decode('hex'))
-  ret = send2(message)
-  # Okay, this is the string we need to use, ie "357d15929887d0"
-  reply = str(ret).encode('hex')
-  # Turn it into an array of bytes
-  message = bytearray(reply.decode('hex'))
-  ret = send2(message)
-  # Receive 010405
-  if ret.__str__().encode('hex') == '010405':
-    print 'Success, initialised'
-  else:
-    print 'Got '+ret.__str__().encode('hex') 
-  return ret
-
 
 def parity(message):
   '''
@@ -241,6 +222,10 @@ class Train(object):
     message = bytearray('E400000000'.decode('hex'))
     message[1] = 0x13   #128 speed steps
     struct.pack_into(">H",message,2,self.address)
+    # NB If speed is set to max, the command has to be done differently
+    # else the elink bombs, so it is just easier to block it.
+    if speed > 120:
+      speed = 120
     message[4] = speed
     if direction == FORWARD : message[4] |= 0x80
     elif direction == REVERSE : message[4] &= 0x7F
