@@ -1,0 +1,50 @@
+This is the serial connection dump between an updated (v63) eLink with Hornby Railmaster.
+
+Stock, this conversation is a little different.  
+
+See 
+
+  http://www.rmweb.co.uk/community/index.php?/topic/89027-elink-and-hornby-railmaster/
+
+for more information
+
+Joe
+
+==== Start data dump ====
+
+W
+000175: 29.11.2014 11:50:19.039 +0.0
+ 21 24 05                                          !$.
+
+R
+000198: 29.11.2014 11:50:19.538 +0.0
+ 01 02 03                                          ...
+
+W 
+000219: 29.11.2014 11:50:19.538 +0.0
+ 3A 36 34 4A 4B 44 38 39 42 53 54 39               :64JKD89BST9
+
+R
+000242: 29.11.2014 11:50:20.038 +0.0
+ 35 9C 2B 8E 8F A5 26                              5ú+éè•&
+
+W 
+000287: 29.11.2014 11:50:24.038 +0.0
+ 35 D5 64 C7 C8 DE 55                              5’d«»ﬁU
+
+R
+000310: 29.11.2014 11:50:25.288 +0.0
+ 01 04 05...
+ 
+W
+000331: 29.11.2014 11:50:26.539 +0.0
+ 21 21 00                                          !!.
+
+R
+000356: 29.11.2014 11:50:26.575 +0.0
+ 63 21 6A 01 29                                      c!j.)
+ 
+W 
+000517: 29.11.2014 11:50:27.541 +0.0
+ E4 13 00 03 80 74 E4 13 00 03 80 74 52 01 89 DA   ‰...Ät‰...ÄtR.â⁄
+ 52 01 89 DA 52 00 8C DE 52 00 8C DE 52 00 8E      R.â⁄R.åﬁR.åﬁR.é
