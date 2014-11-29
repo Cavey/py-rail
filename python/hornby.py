@@ -62,9 +62,10 @@ def setup():
   get_firmware_version()
   status = get_status()
   if str(status).encode('hex') == '010203':
+    print 'eLink not yet initialised...'
     initialise()
   else:
-    print 'Init skipped '+str(type(status))
+    print 'Elink Initialised '+str(type(status))
 
 def get_firmware_version():
   '''
@@ -116,8 +117,8 @@ def initialise():
   # foreach byte in ret, add 0x39
   lrc ^= message[0]
   for i in range(1,5):
-    lrc ^= message[i]
     message[i] += 0x39
+    lrc ^= message[i]
   # Update parity
   message[6] = lrc
   # Send back.  This SHOULD work.
