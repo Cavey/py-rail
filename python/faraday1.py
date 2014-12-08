@@ -49,6 +49,13 @@ def incoming_train(id):
     
 def outgoing_train(id):
     print "Train leaving the crossing"
+
+def car(id):
+    value = GPIO.input(id)
+    if value:
+      outgoing_car(id)
+    else :
+      incoming_car(id)
     
 def incoming_car(id):
     print "Car approaching the crossing"
@@ -73,7 +80,8 @@ if isroot:
     
     incoming_car_sensor = 23
     GPIO.setup(incoming_car_sensor,GPIO.IN)
-    GPIO.add_event_detect(incoming_car_sensor, GPIO.RISING, callback=incoming_car)
+    GPIO.add_event_detect(incoming_car_sensor, GPIO.BOTH, callback=car)
+    #GPIO.add_event_detect(incoming_car_sensor, GPIO.FALLING, callback=outgoing_car)
     
     outgoing_car_sensor = 18
     GPIO.setup(outgoing_car_sensor,GPIO.IN)
