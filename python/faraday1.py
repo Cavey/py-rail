@@ -9,6 +9,7 @@
 import os
 import hornby # Use hornby_lower_interface.py as the interface for controlling trains and accessories
 import time #Use python standard module time for simple timming functions
+from time import gmtime, strftime
 import RPi.GPIO as GPIO
 
 # Global Settings - Not too fast, not too slow
@@ -55,8 +56,9 @@ def writelog(message):
       To write to a file, call this function
    '''
    print message
+   logmsg = strftime("%Y-%m-%d %H:%M:%S")+","+message
    with open("messagelog.log", "a") as myfile:
-     myfile.write(message)
+     myfile.write(logmsg)
      myfile.write("\n")
 
 def incoming_train(id):

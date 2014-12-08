@@ -123,7 +123,7 @@ isroot = (os.geteuid() == 0);
 '''
 if isroot:
     GPIO.setmode(GPIO.BCM)
-    SP = 7
+    SP = 24
     GPIO.setup(SP,GPIO.IN)
     print "Running as root.  GPIO enabled";
 else:
