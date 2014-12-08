@@ -23,7 +23,8 @@ try:
   hornby.connection_open('/dev/ttyACM0',115200) 
 except RuntimeError as e:
   try:
-    hornby.connection_open('/dev/ttyACM1',115200) 
+    hornby.connection_open
+    ('/dev/ttyACM1',115200) 
   except RuntimeError as e:
     hornby.connection_open('/dev/ttyACM2',115200) 
 
@@ -44,11 +45,37 @@ t1.throttle(0,hornby.FORWARD)
 # have been using "if isroot" before GPIO calls.
 isroot = (os.geteuid() == 0);
 
+g_train_stopped = 0
+g_train_on_crossing = 0
+g_net_cars = 0
+
+# Example function for writing to a file
+def writelog(message):
+   '''
+      To write to a file, call this function
+   '''
+   print message
+   with open("messagelog.log", "a") as myfile:
+     myfile.write(message)
+     myfile.write("\n")
+
 def incoming_train(id):
-    print "Train approaching the crossing"
+    global g_net_cars
+    global g_train_stopped
+    global g_train_on_crossing
+    writelog( "Train approaching the crossing")
+    g_train_on_crossing = 1
+    if g_net_cars > 0:
+      writelog( "Car on crossing, stopping train" )
+      t1.throttle(0,hornby.FORWARD)
+      g_train_stopped = 1
     
 def outgoing_train(id):
-    print "Train leaving the crossing"
+    global g_net_cars
+    global g_train_stopped
+    global g_train_on_crossing
+    writelog( "Train leaving the crossing" )
+    g_train_on_crossing = 0
 
 def car(id):
     value = GPIO.input(id)
@@ -58,10 +85,27 @@ def car(id):
       incoming_car(id)
     
 def incoming_car(id):
-    print "Car approaching the crossing"
+    global g_net_cars
+    global g_train_stopped
+    global g_train_on_crossing
+    writelog( "Car approaching the crossing" )
+    g_net_cars += 1
+    if g_net_cars > 0 and g_train_on_crossing == 1:
+      writelog( "Car arrives when train on crossing" )
     
 def outgoing_car(id):
-    print "Car leaving the crossing"
+    global g_net_cars
+    global g_train_stopped
+    global g_train_on_crossing
+    writelog( "Car leaving the crossing" )
+    g_net_cars -= 1
+    if g_net_cars < 0:
+      writelog( "Imaginary cars detected" )
+      g_net_cars = 0
+    if g_net_cars == 0 and g_train_stopped == 1:
+      writelog( "Car left crossing, resume journey" )
+      t1.throttle(g_desired_speed, g_direction)
+      g_train_stopped = 0
     
 
 #------------------------------- Sensor setup below -------------------------------------#
@@ -89,33 +133,6 @@ if isroot:
 else:
     print "NOT running as root.  GPIO (sensors) disabled";
 
-
-def Motion(SP):
-    print "train passed the first sensor on   " + time.strftime("%c")  
-    print "train stopping"
-    t1.throttle(0,hornby.FORWARD)
-    time.sleep(1)
-    print "what would you like to do??"
-    option = raw_input("Press a) if you wish to carry on moving forward\nPress b) if you wish to reverse \n>>")
-    repeat = 1
-#    while repeat >= 1:
-##    while True:
-    if option == "a":
-      
-      repeat+= 1
-      t1.throttle(90,hornby.FORWARD)
-      
-    elif option == "b":
-      
-      repeat+= 1
-      t1.throttle(80,hornby.REVERSE)
-    else:
-      print "invalid option"
-        
-    
-##    t1.throttle(30,hornby.REVERSE)
-##    wait(7)
-##    t1.throttle(0,hornby.REVERSE)
 
 try:
     print '''
@@ -150,10 +167,3 @@ except KeyboardInterrupt:
     \t\t\t********************************
           '''
 
-# Example function for writing to a file
-def writelog(message):
-   '''
-      To write to a file, call this function
-   '''
-   with open("messagelog.log", "a") as myfile:
-     myfile.write(message)
