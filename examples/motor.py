@@ -25,7 +25,7 @@ for pin in controlpins:
 
 for i in range(512/4):
   for halfstep in range(8):
-    halfstep = 7-halfstep
+    #halfstep = 7-halfstep
     for pin in range(4):
       GPIO.output(controlpins[pin], seq[halfstep][pin])
     time.sleep(0.001)
