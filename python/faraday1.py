@@ -13,7 +13,7 @@ from time import gmtime, strftime
 import RPi.GPIO as GPIO
 
 # Global Settings - Not too fast, not too slow
-g_desired_speed = 70
+g_desired_speed = 75
 g_slow_speed = 45
 g_direction = hornby.FORWARD
 
