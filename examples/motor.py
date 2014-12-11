@@ -23,7 +23,7 @@ for pin in controlpins:
   GPIO.setup(pin, GPIO.OUT)
   GPIO.output(pin,0)
 
-for i in range(512/4):
+for i in range(512/16):
   for halfstep in range(8):
     # Comment out to lower
     halfstep = 7-halfstep
